@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+  <title>ToDonkey!</title>
+
+  <META name="verify-v1" content="KXJKwyn+R8/lEz7wUu45BpFP7CC9MZazKKXqplkxMIg="/>
+  <META NAME="ROBOTS" CONTENT="NOARCHIVE">
+  <META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <%=stylesheet_link_tag 'formtastic'%>
+  <%=stylesheet_link_tag 'formtastic_changes.css'%>
+  <%=stylesheet_link_tag 'base'%>
+  <%=stylesheet_link_tag 'blueprint/screen', :media => "screen, projection"%>
+  <%=stylesheet_link_tag 'blueprint/print', :media => "print"%>
+  <%=stylesheet_link_tag 'blueprint/plugins/buttons/screen', :media => "print"%>
+  <!--[if IE]>
+    <%=stylesheet_link_tag 'blueprint/ie', :media => "screen, projection"%>
+  <![endif]-->
+</head>
+
+<body>
+<div class="container">
+
+
+  <!--<div id="header">
+     <button type="submit" class="button positive">
+      <img src="css/blueprint/plugins/buttons/icons/tick.png" alt=""/> Save
+    </button>
+
+    <a class="button" href="/password/reset/">
+      <img src="/stylesheets/blueprint/plugins/buttons/icons/key.png" alt=""/> Change Password
+    </a>
+
+    <a href="#" class="button negative">
+      <img src="/stylesheets/blueprint/plugins/buttons/icons/cross.png" alt=""/> Cancel
+    </a> 
+  </div> -->
+
+  <div id="content">
+    <%=raw flash_messages%>
+    <%= yield %>
+  </div>
+
+  <!-- <div id="footer">
+    ToDonkey
+  </div> -->
+
+
+</div>
+
+</body>
+</html>
+

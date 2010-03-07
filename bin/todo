@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'net/http'
+require 'base64'
+require 'cgi'
+require 'magic_key_auth'
+require 'zlib'
+
+URL = "localhost" #"todonkey.donkeyhighway.com"
+PORT = "3009" #80
+#PRIVATE_KEY_LOCATION = File.expand_path("~") + "/.ssh/id_rsa"
+PRIVATE_KEY_LOCATION = "/home/mcroeder/.ssh/id_rsa"
+
+#signer = EzCrypto::Signer.from_file(PRIVATE_KEY_LOCATION)
+#timestamp = Time.now.to_i.to_s
+signature = MagicKeyAuth::Message.new(:keyfile => PRIVATE_KEY_LOCATION)
+digest = Base64.encode64(Zlib::Deflate.deflate(signature.digest, 9))
+data = ""
+{'digest' => digest, 'message' => signature.message, 'base_todo[detail]' => $*.join(' ')}.each do |name, val|
+    data << "#{name}=#{CGI.escape(val)}&"
+end
+#{'timestamp' => timestamp,
+#  'signature' => Base64.encode64(signer.sign(timestamp)),
+#  'base_todo[detail]' => $*.join(' ')}.each do |name, val|
+#    data << "#{name}=#{CGI.escape(val)}&"
+#end
+
+resp, data = Net::HTTP.new(URL, PORT).post('/todos.json', data)
+
+puts "#{data}"

@@ -1,0 +1,21 @@
+embed_assets: on
+compress_assets: on
+javascript_compressor: closure
+
+<% css_path = "public/stylesheets/"
+  blueprint_csses = %w(screen print plugins/buttons/screen).map{|c| css_path + "blueprint/" + c + ".css"}  
+%>
+
+javascripts:
+  common:
+    - public/javascripts/jquery.js
+stylesheets:
+  ie:
+    <% blueprint_csses.each do |css| %>
+    - <%= css %>
+    <% end %>
+    - public/stylesheets/blueprint/ie.css
+  not_ie:
+    <% blueprint_csses.each do |css| %>
+    - <%= css %>
+    <% end %>

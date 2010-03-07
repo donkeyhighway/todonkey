@@ -1,0 +1,5 @@
+<%if @todonkeys.any?%>
+  <%@todonkeys.each do |donk|%>
+    <%=render :partial => 'shared/todos/detail', :locals => {:base_todo => donk}%>
+  <%end%>
+<%end%>

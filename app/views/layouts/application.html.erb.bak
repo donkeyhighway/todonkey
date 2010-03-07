@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+  <title><%= @page_title || "your mom" %></title>
+
+  <META name="verify-v1" content="KXJKwyn+R8/lEz7wUu45BpFP7CC9MZazKKXqplkxMIg="/>
+  <META NAME="ROBOTS" CONTENT="NOARCHIVE">
+  <META http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <% if request.headers['User-Agent'].to_s =~ /msie [67]/i %>
+    <%= include_stylesheets :ie %>
+  <% else %>
+    <%= include_stylesheets :not_ie %>
+  <% end %>
+
+</head>
+
+<body>
+<div class="container">
+
+
+  <div id="header">
+    HEADER
+  </div>
+
+  <div id="content">
+
+    <%= yield %>
+
+  </div>
+
+  <div id="footer">
+    FOOTER
+  </div>
+
+
+</div>
+
+</body>
+</html>
+

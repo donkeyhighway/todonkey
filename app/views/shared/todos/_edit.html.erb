@@ -1,0 +1,13 @@
+<%form_for(@base_todo, :url => {:action => "update"}) do |f|%>
+  <%=f.error_messages%>
+  Detail? <%=f.text_field :detail%>
+  <button type="submit" class="button positive">
+    <img src="css/blueprint/plugins/buttons/icons/tick.png" alt=""/> Save
+  </button>
+<%end%>
+
+<% semantic_form_for :base_todo, :url => {:action => "update"} do |form| %>
+  <%= form.input :detail, :as =>:text%>
+  <input type="hidden" name="_method" value="put"/>
+  <%= form.buttons %>
+<% end %>

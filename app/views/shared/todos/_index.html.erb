@@ -1,0 +1,17 @@
+<%if @base_todos.any?%>
+  <%@base_todos.each do |todo|%>
+    <p style="font-weight:bold">
+      <%=todo.class.to_s.upcase%> (<%=todo.id%>): <%=todo.detail%>
+    </p>    
+    <%unless todo.childless?%>
+      <ul>
+        <%todo.children.each do |child|%>
+          <%=render_child child%>
+        <%end%>
+      </ul>
+    <%end%>
+    <hr/>
+  <%end%>
+<%else%>
+  None! Make a new <%=@base_todo_type.to_s%>
+<%end%>

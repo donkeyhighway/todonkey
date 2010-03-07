@@ -1,0 +1,50 @@
+#header{
+  padding: 10px;
+  background-color:#eee;
+  border-bottom: 1px #444 solid;
+}
+
+#footer{
+  clear:both;
+  border-top: 1px #444 solid;
+  background-color:#eee;
+  padding: 10px;
+  text-align:center;
+}
+
+#left_column{
+  background-color: yellow ;
+}
+
+#right_column {
+  background-color:  green ;
+}
+
+#middle_column {
+  background-color: red ;
+}
+
+h1{
+  background-color:#eee;
+  
+}
+
+#todonkey-detail {
+  display:inline;
+  margin:1px;
+}
+
+#todonkey-detail p {
+    margin:0;
+}
+
+.type {
+  font-weight:bold;
+}
+
+.italic {
+  font-style:italic;
+}
+div.indent {
+  margin-left: 20px;
+}
