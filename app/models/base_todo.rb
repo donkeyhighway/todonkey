@@ -11,6 +11,10 @@ class BaseTodo < ActiveRecord::Base
     deets.blank? ? where("1=1") : where("detail rlike ?", deets)
   }
 
+  scope :in_group, lambda{|group|
+    group.blank? ? where("1=1") : where(:parent_id => group.id)
+  }
+
   def childless?
     children.count == 0
   end
@@ -25,6 +29,10 @@ class BaseTodo < ActiveRecord::Base
 
   def child?
     !self.parent_id.nil?
+  end
+
+  def finish!(force=false)
+    #recursively 'finish' all children if force is true?
   end
 
 end

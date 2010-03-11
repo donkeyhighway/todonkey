@@ -8,6 +8,7 @@ gem "mysql"
 gem "inherited_resources", "1.1.0"
 #gem "jammit"
 gem "formtastic"
+gem "magic_key_auth"
 #gem "authlogic" this gem isn't ready for rails3 yet, but vendored it is
 
 group :development do
