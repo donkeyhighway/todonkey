@@ -1,0 +1,1 @@
+require 'dated_scope'
