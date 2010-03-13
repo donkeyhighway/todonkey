@@ -30,4 +30,5 @@ Todonkey::Application.configure do
 
   # Enable threaded mode
   # config.threadsafe!
+  config.time_zone = 'UTC'
 end

@@ -17,10 +17,10 @@ class BaseTodosController < ApplicationController
     group = nil
     group = unless params[:grouping].blank?
       g = Grouping.detailed_like(params[:grouping]).all
-      if g.size != 1
-        raise "we found multiple (#{g.size}) groupings name like '#{params[:grouping]}': #{g.map(&:detail).join(', ')}" if g.size > 1
-        raise "no group found like '#{params[:grouping]}'" if g.size == 0
-      end      
+      
+      raise "we found multiple (#{g.size}) groupings named like '#{params[:grouping]}': #{g.map(&:detail).join(', ')}" if g.size > 1
+      raise "no group found like '#{params[:grouping]}'" if g.size == 0
+      
       g.first
     end
     @base_todos = current_user.send(@base_todo_type.to_s.tableize).detailed_like(params[:search]).in_group(group).all

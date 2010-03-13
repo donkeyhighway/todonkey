@@ -1,10 +1,14 @@
 class BaseTodo < ActiveRecord::Base
+  include DatedScope::Scopes
   set_table_name "todos"  
   belongs_to :parent, :class_name => "BaseTodo"
   has_many :children, :class_name => "BaseTodo", :foreign_key => 'parent_id'  
   belongs_to :user
-  
+
+  dated_scope :using => "created_at"
+
   validates_presence_of :detail, :user_id
+  validates_uniqueness_of :detail, :scope => :user_id
 
   scope :detailed_like, lambda{|deets|
     #there's gotta be a better way to bail on a scope when the value is 'bad'
