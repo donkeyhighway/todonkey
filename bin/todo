@@ -6,26 +6,62 @@ require 'base64'
 require 'cgi'
 require 'magic_key_auth'
 require 'zlib'
+require 'json'
+#http://choice.rubyforge.org/
+require 'choice'
+
+Choice.options do
+  header ''
+  header 'Specific options:'
+
+  option :todo do
+    short '-t'
+    long '--todo=TODO'
+    desc 'add todo'
+    default ''
+  end
+
+  option :grouping do
+    short '-g'
+    long '--grouping=GROUPING'
+    desc 'add todo to a group'
+    default ''
+  end
+
+  separator ''
+  separator 'Common options: '
+
+  option :help do
+    long '--help'
+    desc 'Show this message'
+  end
+
+  option :version do
+    short '-v'
+    long '--version'
+    desc 'Show version'
+    action do
+      puts "todonkey cmd line v0.1"
+      exit
+    end
+  end
+end
 
 URL = "localhost" #"todonkey.donkeyhighway.com"
 PORT = "3009" #80
 #PRIVATE_KEY_LOCATION = File.expand_path("~") + "/.ssh/id_rsa"
 PRIVATE_KEY_LOCATION = "/home/mcroeder/.ssh/id_rsa"
 
-#signer = EzCrypto::Signer.from_file(PRIVATE_KEY_LOCATION)
-#timestamp = Time.now.to_i.to_s
 signature = MagicKeyAuth::Message.new(:keyfile => PRIVATE_KEY_LOCATION)
 digest = Base64.encode64(Zlib::Deflate.deflate(signature.digest, 9))
 data = ""
-{'digest' => digest, 'message' => signature.message, 'base_todo[detail]' => $*.join(' ')}.each do |name, val|
+{'digest' => digest, 'message' => signature.message, 'grouping' => "#{Choice.choices[:grouping]}", 'base_todo[detail]' => "#{Choice.choices[:todo]}"}.each do |name, val|
     data << "#{name}=#{CGI.escape(val)}&"
 end
-#{'timestamp' => timestamp,
-#  'signature' => Base64.encode64(signer.sign(timestamp)),
-#  'base_todo[detail]' => $*.join(' ')}.each do |name, val|
-#    data << "#{name}=#{CGI.escape(val)}&"
-#end
 
 resp, data = Net::HTTP.new(URL, PORT).post('/todos.json', data)
 
-puts "#{data}"
+#puts "#{data}"
+
+todo = JSON.parse(data)
+puts "\n\t'#{todo['detail']}' was ToDonkeyed!\n\n"

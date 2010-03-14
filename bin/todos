@@ -7,6 +7,62 @@ require 'cgi'
 require 'magic_key_auth'
 require 'zlib'
 require 'json'
+#http://choice.rubyforge.org/
+require 'choice'
+
+
+Choice.options do
+  header ''
+  header 'Specific options:'
+
+  option :search do
+    short '-s'
+    long '--search=SEARCH'
+    desc 'regex search for todo based on description'
+    default ''
+  end
+
+  option :grouping do
+    short '-g'
+    long '--grouping=GROUPING'
+    desc 'filter todos by associated grouping'
+    default ''
+  end
+
+  option :today do
+    short '-t'
+    long '--today'
+    desc 'show todos from today'
+    default nil
+  end
+
+  option :yesterday do
+    short '-y'
+    long '--yesterday'
+    desc 'show todos from yesterday'
+    default nil
+  end
+
+  separator ''
+  separator 'Common options: '
+
+  option :help do
+    long '--help'
+    desc 'Show this message'
+  end
+
+  option :version do
+    short '-v'
+    long '--version'
+    desc 'Show version'
+    action do
+      puts "todonkey cmd line v0.1"
+      exit
+    end
+  end
+end
+
+
 
 URL = "localhost" #"todonkey.donkeyhighway.com"
 PORT = "3009" #80
@@ -15,11 +71,14 @@ PRIVATE_KEY_LOCATION = "/home/mcroeder/.ssh/id_rsa"
 
 msg = MagicKeyAuth::Message.new(:keyfile => PRIVATE_KEY_LOCATION)
 digest = Base64.encode64(Zlib::Deflate.deflate(msg.digest, 9))
-search = $*.join(' ')
-uri = URI.parse("http://#{URL}:#{PORT}/todos.json?message=#{CGI.escape(msg.message)}&digest=#{CGI.escape(digest)}&search=#{CGI.escape(search)}")
+#search = $*.join(' ')
+for_day = (Choice.choices[:today] || Choice.choices[:yesterday]) ? (Choice.choices[:today] ? 'today' : 'yesterday') : nil
+uri = URI.parse("http://#{URL}:#{PORT}/todos.json?message=#{CGI.escape(msg.message)}&digest=#{CGI.escape(digest)}&search=#{CGI.escape(Choice.choices[:search])}&grouping=#{CGI.escape(Choice.choices[:grouping])}&for=#{for_day}")
 req = Net::HTTP::Get.new(uri.request_uri)
 
 res = Net::HTTP.new(uri.host, uri.port).start {|http| http.request(req)}
 
 todos = JSON.parse(res.body)
-puts todos.map{|t| t["detail"]}.join("\n")
+puts "\n"
+puts todos.map{|t| "\t#{t['detail']}"}.join("\n")
+puts "\n"
