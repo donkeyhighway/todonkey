@@ -5,7 +5,7 @@ class BaseTodo < ActiveRecord::Base
   has_many :children, :class_name => "BaseTodo", :foreign_key => 'parent_id'  
   belongs_to :user
 
-  dated_scope :using => "created_at"
+  linoleum_scope :using => "created_at"
 
   validates_presence_of :detail, :user_id
   validates_uniqueness_of :detail, :scope => :user_id
