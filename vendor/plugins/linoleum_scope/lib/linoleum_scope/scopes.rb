@@ -25,17 +25,8 @@ module LinoleumScope
 
         scope :ago, lambda{ |scope|
           at = eval("#{scope.rate}.#{scope.unit}").ago
-          #there's a potential gap here if the time frame is in seconds, I'd bet, since we're using mysql to generate the subtracted time for the equality check.
-          #also, there's obviously a need to clean up the following set of conditionals.
-          if scope.measured_in?("seconds")
-            where("DATE_FORMAT(#{self.scoped_to}, '%Y-%m-%d %H%i%s') = ?", at.strftime('%Y-%m-%d %H%M%S'))
-          elsif scope.measured_in?("minutes")
-            where("DATE_FORMAT(#{self.scoped_to}, '%Y-%m-%d %H%i') = ?", at.strftime('%Y-%m-%d %H%M'))
-          elsif scope.measured_in?("hours")
-            where("DATE_FORMAT(#{self.scoped_to}, '%Y-%m-%d %H') = ?", at.strftime('%Y-%m-%d %H'))
-          else
-            where("DATE_FORMAT(#{self.scoped_to}, '%Y-%m-%d') = ?", at.strftime('%Y-%m-%d'))
-          end
+          #there's a potential gap here if the time frame is in seconds, I'd bet, based on the time diff from when the call actually gets evaluated and when it was made
+          where("DATE_FORMAT(#{self.scoped_to}, '#{scope.date_formats_by_unit.first}') = ?", at.strftime(scope.date_formats_by_unit.last))
         }
       end
       
@@ -60,6 +51,15 @@ module LinoleumScope
     def ago
       #this here just to pass the instance up the chain to the named scope
       self.class.ago(self)      
+    end
+
+    #mysql and strftime use different values for date formatting
+    def date_formats_by_unit
+      #mysql format is always at first position, only one value if mysql and strftime are equivalent
+      return ['%Y-%m-%d %H%i%s', '%Y-%m-%d %H%M%S'] if measured_in?("seconds")
+      return ['%Y-%m-%d %H%i', '%Y-%m-%d %H%M'] if measured_in?("minutes")
+      return ['%Y-%m-%d %H'] if measured_in?("hours")
+      return ['%Y-%m-%d']
     end
 
     def measured_in?(unit)
