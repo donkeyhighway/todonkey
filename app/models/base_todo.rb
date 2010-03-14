@@ -1,5 +1,5 @@
 class BaseTodo < ActiveRecord::Base
-  include DatedScope::Scopes
+  include LinoleumScope::Scopes
   set_table_name "todos"  
   belongs_to :parent, :class_name => "BaseTodo"
   has_many :children, :class_name => "BaseTodo", :foreign_key => 'parent_id'  
