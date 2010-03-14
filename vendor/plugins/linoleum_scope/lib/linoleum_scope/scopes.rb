@@ -28,11 +28,11 @@ module LinoleumScope
           #there's a potential gap here if the time frame is in seconds, I'd bet, since we're using mysql to generate the subtracted time for the equality check.
           #also, there's obviously a need to clean up the following set of conditionals.
           if scope.measured_in?("seconds")
-            where("DATE_SUB(#{self.scoped_to}, INTERVAL #{scope.rate} #{scope.unit.singularize}) = ?", at)
+            where("DATE_FORMAT(#{self.scoped_to}, '%Y-%m-%d %H%i%s') = ?", at.strftime('%Y-%m-%d %H%M%S'))
           elsif scope.measured_in?("minutes")
-            where("DATE_FORMAT(DATE_SUB(#{self.scoped_to}, INTERVAL #{scope.rate} #{scope.unit.singularize}), '%Y-%m-%d %k%i') = ?", at.strftime('%Y-%m-%d %H%M'))
+            where("DATE_FORMAT(#{self.scoped_to}, '%Y-%m-%d %H%i') = ?", at.strftime('%Y-%m-%d %H%M'))
           elsif scope.measured_in?("hours")
-            where("DATE_FORMAT(DATE_SUB(#{self.scoped_to}, INTERVAL #{scope.rate} #{scope.unit.singularize}), '%Y-%m-%d %k') = ?", at.strftime('%Y-%m-%d %H'))
+            where("DATE_FORMAT(#{self.scoped_to}, '%Y-%m-%d %H') = ?", at.strftime('%Y-%m-%d %H'))
           else
             where("DATE_FORMAT(#{self.scoped_to}, '%Y-%m-%d') = ?", at.strftime('%Y-%m-%d'))
           end
