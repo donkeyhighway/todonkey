@@ -64,4 +64,4 @@ resp, data = Net::HTTP.new(URL, PORT).post('/todos.json', data)
 #puts "#{data}"
 
 todo = JSON.parse(data)
-puts "\n\t'#{todo['detail']}' was ToDonkeyed!\n\n"
+puts "\n\t'#{todo['detail']}'\n\n"

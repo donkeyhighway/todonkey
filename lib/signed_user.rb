@@ -18,6 +18,7 @@ module SignedUser
       self.signed_user = User.find_or_create_by_login(:login => pem)
     }
     Rails.logger.debug("do we have a signed user? #{self.signed_user.inspect}")
+    self.signed_user
   rescue
     Rails.logger.error{"Exception unpacking user: #{$!.to_s}"}
     self.signed_user = nil
