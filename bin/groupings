@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'net/http'
+require 'base64'
+require 'cgi'
+require 'magic_key_auth'
+require 'zlib'
+require 'json'
+#http://choice.rubyforge.org/
+require 'choice'
+
+
+Choice.options do
+  header ''
+  header 'Specific options:'
+
+  option :search do
+    short '-s'
+    long '--search=SEARCH'
+    desc 'regex search for todo based on description'
+    default ''
+  end
+
+  option :show_id do
+    short '-id'
+    long '--show_id'
+    desc 'include id in display'
+    default nil
+  end
+
+  separator ''
+  separator 'Common options: '
+
+  option :help do
+    long '--help'
+    desc 'Show this message'
+  end
+
+  option :version do
+    short '-v'
+    long '--version'
+    desc 'Show version'
+    action do
+      puts "todonkey cmd line v0.1"
+      exit
+    end
+  end
+end
+
+
+
+URL = "localhost" #"todonkey.donkeyhighway.com"
+PORT = "3009" #80
+#PRIVATE_KEY_LOCATION = File.expand_path("~") + "/.ssh/id_rsa"
+PRIVATE_KEY_LOCATION = "/home/mcroeder/.ssh/id_rsa"
+
+msg = MagicKeyAuth::Message.new(:keyfile => PRIVATE_KEY_LOCATION)
+digest = Base64.encode64(Zlib::Deflate.deflate(msg.digest, 9))
+#search = $*.join(' ')
+uri = URI.parse("http://#{URL}:#{PORT}/groupings.json?message=#{CGI.escape(msg.message)}&digest=#{CGI.escape(digest)}&search=#{CGI.escape(Choice.choices[:search])}")
+req = Net::HTTP::Get.new(uri.request_uri)
+
+res = Net::HTTP.new(uri.host, uri.port).start {|http| http.request(req)}
+
+todos = JSON.parse(res.body)
+puts "\n"
+puts todos.map{|t| "\t#{Choice.choices[:show_id] ? "[#{t['id']}]\t" : ''}#{t['detail']}"}.join("\n")
+puts "\n"

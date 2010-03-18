@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'net/http'
+require 'base64'
+require 'cgi'
+require 'magic_key_auth'
+require 'zlib'
+require 'json'
+
+URL = "localhost" #"todonkey.donkeyhighway.com"
+PORT = "3009" #80
+#PRIVATE_KEY_LOCATION = File.expand_path("~") + "/.ssh/id_rsa"
+PRIVATE_KEY_LOCATION = "/home/mcroeder/.ssh/id_rsa"
+
+signature = MagicKeyAuth::Message.new(:keyfile => PRIVATE_KEY_LOCATION)
+digest = Base64.encode64(Zlib::Deflate.deflate(signature.digest, 9))
+data = ""
+#{'digest' => digest, 'message' => signature.message, 'base_todo[detail]' => $*.join(' ')}.each do |name, val|
+#    data << "#{name}=#{CGI.escape(val)}&"
+#end
+
+resp, data = Net::HTTP.new(URL, PORT).delete("/todos/#{$*.join('')}.json?message=#{CGI.escape(signature.message)}&digest=#{CGI.escape(digest)}")
+
+#puts "#{data}"
+
+todo = JSON.parse(data)
+puts "\n\t'#{todo['detail']}'\n\n"
