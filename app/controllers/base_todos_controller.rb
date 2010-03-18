@@ -25,7 +25,7 @@ class BaseTodosController < ApplicationController
       format.html {}
     end
   rescue
-    Rails.logger.error("Exception creating todo: #{$!.to_s}")
+    Rails.logger.error{"Exception creating todo: #{$!.to_s}"}
     flash[:error] = $!.to_s
     respond_to do |format|
       format.xml{ render :text => $!.to_s }
@@ -40,14 +40,15 @@ class BaseTodosController < ApplicationController
 
     #handle 'yesterday', 'today' options
     @base_todos = @base_todos.send(params[:for].downcase.to_sym) if Grouping::RESERVED_GROUPING.include?(params[:for].try(:downcase))
-    
+
+
     respond_to do |format|
       format.xml { render :xml => @base_todos.to_xml }
       format.json{ render :json => @base_todos.all.as_json }
       format.html{  }
     end
   rescue
-    Rails.logger.error("Exception getting index: #{$!.to_s}")
+    Rails.logger.error{"Exception getting index: #{$!.to_s}"}
     flash[:error] = $!.to_s
     respond_to do |format|
       format.xml{ render :text => $!.to_s }
@@ -61,8 +62,21 @@ class BaseTodosController < ApplicationController
   end
 
   def destroy
-    Rails.logger.debug("DELETE!")
-    
+    @todo = BaseTodo.find(params[:id])
+    @todo.close!
+    flash[:notice] = "#{@todo.detail} is done."
+    respond_to do |format|
+      format.xml{ render :xml => $!.to_s }
+      format.json{ render :json => {:detail => "#{@todo.detail} is done"}}
+      format.html {}
+    end
+  rescue
+    Rails.logger.error{"Exception destroying - #{$!.to_s}"}
+    respond_to do |format|
+      format.xml{ render :text => $!.to_s }
+      format.json{ render :json => {:detail => "KABLAMMO! #{$!.to_s}"} }
+      format.html {}
+    end
   end
 
   private
@@ -75,7 +89,8 @@ class BaseTodosController < ApplicationController
     unless params[:grouping].blank?
       g = params[:grouping].to_i != 0 ? [Grouping.find(params[:grouping])] : Grouping.detailed_like(params[:grouping]).all
 
-      raise Grouping::MultipleFound.new("we found multiple (#{g.size}) groupings named like '#{params[:grouping]}': #{g.map{|grouping| "#{grouping.detail}[#{grouping.id}]"}.join(', ')}") if g.size > 1
+      raise Grouping::MultipleFound.new("we found multiple (#{g.size}) groupings named like '#{params[:grouping]}': " + 
+          "\n\t#{g.map{|grouping| "[#{grouping.id}]#{grouping.detail}"}.join(', ')}") if g.size > 1
       raise Grouping::NoneFound.new("no group found like '#{params[:grouping]}'") if g.size == 0
 
       g.first

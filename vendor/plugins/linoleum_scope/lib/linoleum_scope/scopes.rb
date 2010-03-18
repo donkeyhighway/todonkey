@@ -31,7 +31,6 @@ module LinoleumScope
       end
       
       def method_missing(*args)
-        Rails.logger.debug("CLASS LEVEL MM #{args.inspect}")
         if STRING_TO_NUMBER_MAPPER.keys.include?(args.first)          
           return self.new(:rate => STRING_TO_NUMBER_MAPPER[args.first.to_sym])
         end

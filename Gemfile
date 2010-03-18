@@ -10,6 +10,7 @@ gem "inherited_resources", "1.1.0"
 gem "formtastic"
 gem "magic_key_auth"
 #gem "authlogic" this gem isn't ready for rails3 yet, but vendored it is
+gem "state_machine"
 
 group :development do
   gem "mongrel"

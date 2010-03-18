@@ -43,6 +43,12 @@ Choice.options do
     default nil
   end
 
+  option :show_id do
+    short '-id'
+    long '--show_id'
+    desc 'include id in display'
+  end
+
   separator ''
   separator 'Common options: '
 
@@ -80,5 +86,5 @@ res = Net::HTTP.new(uri.host, uri.port).start {|http| http.request(req)}
 
 todos = JSON.parse(res.body)
 puts "\n"
-puts todos.map{|t| "\t#{t['detail']}"}.join("\n")
+puts todos.map{|t| "\t" + (Choice.choices[:show_id] ? "[#{t['id']}]\t" : '') + "#{t['detail']}"}.join("\n")
 puts "\n"
